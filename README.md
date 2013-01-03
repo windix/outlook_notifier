@@ -1,3 +1,10 @@
+# Outlook Notification
+
+New email notification (desktop / iPhone push) for Outlook Web App
+
+You need to have access to Microsoft EWS (Exchange Web Sercice)
+
+
 ## PREREQUISITES
 
 Growl For Linux - desktop notification
@@ -8,6 +15,32 @@ http://www.prowlapp.com/
 
 
 ## INSTALL
+
+### Growl
+
+For Ubuntu:
+
+```
+# sudo add-apt-repository ppa:mattn/growl-for-linux
+# sudo apt-get update
+# sudo apt-get install growl-for-linux
+```
+
+To start, run `/usr/bin/gol`
+
+Under Ubuntu, to set it start with X:
+
+Click the gear icon on top-right corner: Startup Application...
+
+Then add it to the list
+
+
+### Prowl
+
+Just download the app from app store and register your account, then create a new API key.
+
+
+### Itself
 
 ```
 bundle install
@@ -26,4 +59,33 @@ After running for the first time, edit config file
 ```
 ./notify.rb
 ```
+
+
+## MISC
+
+### Create desktop shortcut for Outlook Web App
+
+Chrome > Tools > Create Application Shortcut... 
+
+and it will create a desktop shortcut for it 
+
+### Running Outlook Web App with Linux Chrome
+
+Linux Chrome is not in the official support list, but we can spoof user agent as other browser (e.g. Firefox on Windows) using this extension:
+
+https://chrome.google.com/webstore/detail/user-agent-switcher-for-c/djflhoibgkdhkhhcedjiklpkjnoahfmg
+
+After installation, go to settings, and add Your webmail URL (e.g. "wmail.tabcorp.com.au") to "Permanent Spoof list", so it will only affect outlook web app
+
+### Gems
+
+* ruby-prowl: https://github.com/augustl/ruby-prowl
+* Viewpoint: https://github.com/windix/Viewpoint (my version with a bug fix)
+
+### License
+
+© 2013 Wei Feng, Luxbet Pty Ltd. 
+
+Released under [The BSD 3 clause License](http://www.opensource.org/licenses/BSD-3-Clause)
+
 
