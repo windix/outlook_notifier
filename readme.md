@@ -54,7 +54,7 @@ After running for the first time, edit config file
 ## RUNNING
 
 ```
-./notify.rb
+./check.rb
 ```
 
 
