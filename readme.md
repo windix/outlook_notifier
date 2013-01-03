@@ -1,17 +1,14 @@
 # Outlook Notification
 
-New email notification (desktop / iPhone push) for Outlook Web App
+New email notification (desktop / iOS push) for Outlook Web App
 
 You need to have access to Microsoft EWS (Exchange Web Sercice)
 
 
 ## PREREQUISITES
 
-Growl For Linux - desktop notification
-http://mattn.github.com/growl-for-linux/
-
-Prowl - iOS push notification
-http://www.prowlapp.com/
+* [Growl For Linux](http://mattn.github.com/growl-for-linux/) - desktop notification 
+* [Prowl](http://www.prowlapp.com/) - iOS push notification
 
 
 ## INSTALL
@@ -79,8 +76,9 @@ After installation, go to settings, and add Your webmail URL (e.g. "wmail.tabcor
 
 ### Gems
 
-* ruby-prowl: https://github.com/augustl/ruby-prowl
-* Viewpoint: https://github.com/windix/Viewpoint (my version with a bug fix)
+* [ruby-prowl](https://github.com/augustl/ruby-prowl)
+* [ruby-growl](https://github.com/drbrain/ruby-growl)
+* [Viewpoint](https://github.com/windix/Viewpoint) (my version with a bug fix)
 
 ### License
 
