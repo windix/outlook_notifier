@@ -19,7 +19,8 @@ else
         'EWS' => {
             'endpoint' => 'https://wmail.tabcorp.com.au/EWS/Exchange.asmx',
             'username' => 'username',
-            'password' => 'password'
+            'password' => 'password',
+            'ssl_verification' => true
         },
         'proxy' => {
             'host' => 'localhost',
@@ -49,7 +50,12 @@ else
     exit
 end
 
-cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password']
+if config['ssl_verification']
+    cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password']
+else
+    puts "Warning: SSL certificate verification is disabled"
+    cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password'], http_opts: {ssl_verify_mode: 0}
+end
 
 tz = TZInfo::Timezone.get('Australia/Melbourne')
 
