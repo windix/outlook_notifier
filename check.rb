@@ -87,13 +87,17 @@ while true
                     message.mark_read!
                     
                     # growl desktop notification
-                    growl.notify "Outlook", current_folder.display_name, desc if growl
-                    puts "growl (desktop) sent"
+                    if config['growl']['enabled']
+                        growl.notify "Outlook", current_folder.display_name, desc if growl
+                        puts "growl (desktop) sent"
+                    end
 
                     # prowl mobile notification
-                    prowl.add :event => current_folder.display_name,
-                              :description => desc if prowl
-                    puts "prowl (mobile) sent"
+                    if config['prowl']['enabled']
+                        prowl.add :event => current_folder.display_name,
+                                  :description => desc if prowl
+                        puts "prowl (mobile) sent"
+                    end
                 end
             end
         end
