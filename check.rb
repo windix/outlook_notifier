@@ -42,7 +42,8 @@ else
             'new relic',
             'reviewboard'
         ],
-        'check_interval' => 5
+        'check_interval' => 5,
+        'timezone' => 'Australia/Melbourne'
     }
 
     puts "Seems first time running -- please update generated config file and re-run"
@@ -57,7 +58,7 @@ else
     cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password'], http_opts: {ssl_verify_mode: 0}
 end
 
-tz = TZInfo::Timezone.get('Australia/Melbourne')
+tz = TZInfo::Timezone.get(config['timezone'])
 
 if config['prowl']['enabled']
     prowl = Prowl.new :apikey => config['prowl']['apikey'], :application => config['prowl']['application']
