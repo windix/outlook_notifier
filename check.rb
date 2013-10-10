@@ -43,7 +43,8 @@ else
             'reviewboard'
         ],
         'check_interval' => 5,
-        'timezone' => 'Australia/Melbourne'
+        'timezone' => 'Australia/Melbourne',
+        'mark_read' => true # mark email as read on notify?
     }
 
     puts "Seems first time running -- please update generated config file and re-run"
@@ -59,6 +60,9 @@ else
 end
 
 tz = TZInfo::Timezone.get(config['timezone'])
+
+# array of message IDs that we've already notified about during this session
+notified = []
 
 if config['prowl']['enabled']
     prowl = Prowl.new :apikey => config['prowl']['apikey'], :application => config['prowl']['application']
@@ -82,22 +86,26 @@ while true
 
             if current_folder.unread_count > 0
                 current_folder.unread_messages.each do |message|
-                    datetime = tz.utc_to_local(message.date_time_sent).strftime('%d/%m/%Y %H:%I')
-                    desc = "From: #{message.from.name} on #{datetime}\n#{message.subject}"
-                    puts desc
-                    message.mark_read!
-                    
-                    # growl desktop notification
-                    if config['growl']['enabled']
-                        growl.notify "Outlook", current_folder.display_name, desc if growl
-                        puts "growl (desktop) sent"
-                    end
+                    unless notified.include?(message.id)
+                        datetime = tz.utc_to_local(message.date_time_sent).strftime('%d/%m/%Y %H:%I')
+                        desc = "From: #{message.from.name} on #{datetime}\n#{message.subject}"
+                        puts desc
+                        message.mark_read! if config['mark_read']
+                        
+                        # growl desktop notification
+                        if config['growl']['enabled']
+                            growl.notify "Outlook", current_folder.display_name, desc if growl
+                            puts "growl (desktop) sent"
+                        end
 
-                    # prowl mobile notification
-                    if config['prowl']['enabled']
-                        prowl.add :event => current_folder.display_name,
-                                  :description => desc if prowl
-                        puts "prowl (mobile) sent"
+                        # prowl mobile notification
+                        if config['prowl']['enabled']
+                            prowl.add :event => current_folder.display_name,
+                                      :description => desc if prowl
+                            puts "prowl (mobile) sent"
+                        end
+
+                        notified << message.id
                     end
                 end
             end
