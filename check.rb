@@ -19,7 +19,8 @@ else
         'EWS' => {
             'endpoint' => 'https://wmail.tabcorp.com.au/EWS/Exchange.asmx',
             'username' => 'username',
-            'password' => 'password'
+            'password' => 'password',
+            'ssl_verification' => true
         },
         'proxy' => {
             'host' => 'localhost',
@@ -41,7 +42,9 @@ else
             'new relic',
             'reviewboard'
         ],
-        'check_interval' => 5
+        'check_interval' => 5,
+        'timezone' => 'Australia/Melbourne',
+        'mark_read' => true # mark email as read on notify?
     }
 
     puts "Seems first time running -- please update generated config file and re-run"
@@ -49,9 +52,17 @@ else
     exit
 end
 
-cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password']
+if config['ssl_verification']
+    cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password']
+else
+    puts "Warning: SSL certificate verification is disabled"
+    cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password'], http_opts: {ssl_verify_mode: 0}
+end
 
-tz = TZInfo::Timezone.get('Australia/Melbourne')
+tz = TZInfo::Timezone.get(config['timezone'])
+
+# array of message IDs that we've already notified about during this session
+notified = []
 
 if config['prowl']['enabled']
     prowl = Prowl.new :apikey => config['prowl']['apikey'], :application => config['prowl']['application']
@@ -75,19 +86,27 @@ while true
 
             if current_folder.unread_count > 0
                 current_folder.unread_messages.each do |message|
-                    datetime = tz.utc_to_local(message.date_time_sent).strftime('%d/%m/%Y %H:%I')
-                    desc = "From: #{message.from.name} on #{datetime}\n#{message.subject}"
-                    puts desc
-                    message.mark_read!
-                    
-                    # growl desktop notification
-                    growl.notify "Outlook", current_folder.display_name, desc if growl
-                    puts "growl (desktop) sent"
+                    unless notified.include?(message.id)
+                        datetime = tz.utc_to_local(message.date_time_sent).strftime('%d/%m/%Y %H:%I')
+                        desc = "From: #{message.from.name} on #{datetime}\n#{message.subject}"
+                        puts desc
+                        message.mark_read! if config['mark_read']
+                        
+                        # growl desktop notification
+                        if config['growl']['enabled']
+                            growl.notify "Outlook", current_folder.display_name, desc if growl
+                            puts "growl (desktop) sent"
+                        end
 
-                    # prowl mobile notification
-                    prowl.add :event => current_folder.display_name,
-                              :description => desc if prowl
-                    puts "prowl (mobile) sent"
+                        # prowl mobile notification
+                        if config['prowl']['enabled']
+                            prowl.add :event => current_folder.display_name,
+                                      :description => desc if prowl
+                            puts "prowl (mobile) sent"
+                        end
+
+                        notified << message.id
+                    end
                 end
             end
         end
