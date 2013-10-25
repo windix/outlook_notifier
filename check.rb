@@ -3,6 +3,7 @@
 require 'bundler/setup'
 
 require 'yaml'
+require 'logging'
 require 'viewpoint'
 require 'tzinfo'
 require 'prowl'
@@ -10,11 +11,13 @@ require 'ruby-growl'
 
 include Viewpoint::EWS
 
-# disable this to show debug information
+# set it to :debug to show debug information from viewpoint
 Logging.logger.root.level = :error
 
-if File.exists? 'config'
-    config = YAML::load(File.open('config'))
+config_file = File.expand_path('config', File.dirname(__FILE__))
+
+if File.exists?(config_file)
+    config = YAML::load(File.open(config_file))
 else
     config = {
         'EWS' => {
