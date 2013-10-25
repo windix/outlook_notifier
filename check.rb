@@ -52,7 +52,7 @@ else
     exit
 end
 
-if config['ssl_verification']
+if config['EWS']['ssl_verification']
     cli = Viewpoint::EWSClient.new config['EWS']['endpoint'], config['EWS']['username'], config['EWS']['password']
 else
     puts "Warning: SSL certificate verification is disabled"
