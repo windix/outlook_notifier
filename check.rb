@@ -2,6 +2,7 @@
 
 require 'bundler/setup'
 
+require 'yaml'
 require 'viewpoint'
 require 'tzinfo'
 require 'prowl'
@@ -93,15 +94,15 @@ while true
                         message.mark_read! if config['mark_read']
                         
                         # growl desktop notification
-                        if config['growl']['enabled']
-                            growl.notify "Outlook", current_folder.display_name, desc if growl
+                        if growl
+                            growl.notify "Outlook", current_folder.display_name, desc
                             puts "growl (desktop) sent"
                         end
 
                         # prowl mobile notification
-                        if config['prowl']['enabled']
+                        if prowl
                             prowl.add :event => current_folder.display_name,
-                                      :description => desc if prowl
+                                      :description => desc
                             puts "prowl (mobile) sent"
                         end
 
