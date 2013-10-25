@@ -10,7 +10,8 @@ GIT
 
 GIT
   remote: git://github.com/windix/ruby-prowl.git
-  revision: e8527476cace08db76d9c83bc45e409844771ccf
+  revision: 7c6e8742e445d8b0e9b53538978f2ca0f5f045b9
+  branch: use-post
   specs:
     prowl (0.1.3)
 
