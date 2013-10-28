@@ -8,6 +8,7 @@ require 'viewpoint'
 require 'tzinfo'
 require 'prowl'
 require 'ruby-growl'
+require 'cgi'
 
 include Viewpoint::EWS
 
@@ -79,7 +80,9 @@ if config['growl']['enabled']
 end
 
 puts "Retrieving folder IDs..."
-folder_id_list = config['monitor_list'].collect { |display_name| cli.find_by_name(display_name).first.id }
+folder_id_list = cli.folders(:traversal => :deep)
+                    .select { |f| config['monitor_list'].include?(f.display_name) }
+                    .collect { |f| f.id }
 
 while true
     begin
@@ -92,8 +95,19 @@ while true
                 current_folder.unread_messages.each do |message|
                     unless notified.include?(message.id)
                         datetime = tz.utc_to_local(message.date_time_sent).strftime('%d/%m/%Y %H:%I')
-                        desc = "From: #{message.from.name} on #{datetime}\n#{message.subject}"
+                        desc = "From: #{message.sender.name} (#{message.sender.email}) on #{datetime}\n#{message.subject}"
+                        body = message.body.gsub(/<!--.*-->/m, "") # strip anonying CSS
+                                           .gsub(/<\/?[^>]*>/m, "") # strip HTML tags
+                                           .gsub("\r\n", "\n")
+                                           .gsub("&nbsp;", " ")
+                                           .gsub(/(\s*\n){2,}/m, "\n") # combine empty lines
+                        body = CGI.unescapeHTML(body)
+
                         puts desc
+
+                        # append part of body for preview
+                        desc = "#{desc}\n#{body[0..500]}"
+
                         message.mark_read! if config['mark_read']
                         
                         # growl desktop notification

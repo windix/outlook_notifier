@@ -1,8 +1,6 @@
-source :rubygems
+source 'https://rubygems.org'
 
-#gem 'viewpoint', :path => '~/git/Viewpoint'
-gem 'viewpoint', :git => 'git://github.com/windix/Viewpoint.git'
+gem 'viewpoint', :git => 'https://github.com/zenchild/Viewpoint'
 gem 'tzinfo'
-#gem 'prowl', :path => '~/git/ruby-prowl', :branch => 'use-post'
-gem 'prowl', :git => 'git://github.com/windix/ruby-prowl.git', :branch => 'use-post'
+gem 'prowl', :git => 'https://github.com/windix/ruby-prowl.git', :branch => 'use-post'
 gem 'ruby-growl'
