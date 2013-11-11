@@ -4,6 +4,16 @@ New email notification (desktop / iOS push) for Outlook Web App
 
 You need to have access to Microsoft EWS (Exchange Web Sercice)
 
+## ALSO TRY THUNDERBIRD!
+
+With the Thunderbird extension:
+* [ExQuilla](https://exquilla.zendesk.com/home) - for email
+* [Exchange EWS Provider Add-on for Lightning](http://www.1st-setup.nl/wordpress/?page_id=133) - for calendar (require lightning)
+
+You can get email / calendar working (under Linux and other OS) in Thunderbird instead of webmail! It can replace desktop notification. 
+
+If you are still interested in mobile notification (iOS push), keep reading.
+
 
 ## PREREQUISITES
 
